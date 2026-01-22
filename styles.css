@@ -1,0 +1,583 @@
+/* Custom Font */
+@font-face {
+    font-family: 'BrownSugar';
+    src: url('Fonts/brown-sugar.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'TanMonCheri';
+    src: url('Fonts/tan-mon-cheri.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Animation Keyframes */
+@keyframes fadeInUpSlow {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInDelayed {
+    0%, 60% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* Header */
+.main-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 2rem 0;
+    z-index: 1001;
+    text-align: center;
+    animation: fadeInDelayed 4s ease-out both;
+}
+
+.rsvp-link {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.2rem;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+    font-weight: 300;
+}
+
+.rsvp-link:hover {
+    opacity: 0.8;
+}
+
+/* Hero Section */
+.hero {
+    min-height: 100vh;
+    min-height: 100dvh; /* Dynamic viewport height for mobile */
+    width: 100vw;
+    background: url('images/MOMBG.jpg?v=2');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+    position: relative;
+    padding: 8rem 2rem 12rem;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 800px;
+    padding: 0 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    justify-content: center;
+    align-items: center;
+    animation: fadeInUpSlow 2s ease-out;
+}
+
+.content-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: fit-content;
+}
+
+.subtitle-date-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.1rem;
+    width: min-content;
+    min-width: 0;
+}
+
+.museum-title {
+    font-family: 'BrownSugar', cursive, sans-serif;
+    font-size: 4.5rem;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    margin: 0 0 0.2rem 0;
+    line-height: 0.9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: min-content;
+    min-width: 0;
+}
+
+.title-line-1,
+.title-line-2 {
+    display: block;
+    white-space: nowrap;
+}
+
+.title-line-1 {
+    margin-bottom: 0.1em;
+}
+
+.title-line-2 {
+    margin-top: 0.05em;
+}
+
+.subtitle {
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    margin: 0;
+    font-weight: 300;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    text-align: center;
+    overflow: hidden;
+    max-width: 100%;
+    width: 100%;
+}
+
+p.date {
+    font-family: 'TanMonCheri', cursive, sans-serif !important;
+    font-size: 2.8rem !important;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    margin: 0;
+    letter-spacing: 2px;
+    white-space: nowrap;
+    text-align: center;
+    max-width: 100%;
+    width: 100%;
+}
+
+/* Footer */
+.footer {
+    position: fixed;
+    bottom: 6rem;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    text-align: center;
+    width: 100%;
+    animation: fadeInDelayed 3.5s ease-out both;
+}
+
+.footer-link {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    color: white;
+    text-decoration: none;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    line-height: 1.4;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    transition: opacity 0.3s ease;
+    text-transform: uppercase;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.studio-name {
+    display: block;
+    margin-bottom: 0.3rem;
+}
+
+.studio-address {
+    display: block;
+    white-space: nowrap;
+}
+
+.footer-link:hover {
+    opacity: 0.8;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 3rem;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 2rem;
+    font-weight: bold;
+    cursor: pointer;
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+}
+
+.modal h2 {
+    font-family: 'BrownSugar', cursive, sans-serif;
+    font-size: 2.5rem;
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.modal-subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 2rem;
+    font-style: italic;
+}
+
+.rsvp-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group textarea {
+    padding: 1rem;
+    border: 2px solid #e1e8ed;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-family: 'Inter', sans-serif;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
+.submit-btn {
+    background: #2c3e50;
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 1rem;
+}
+
+.submit-btn:hover {
+    background: #34495e;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 600px;
+    padding: 0 2rem;
+    animation: fadeInUp 1s ease;
+}
+
+.hero h2 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    font-weight: 300;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+}
+
+.cta-button {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.cta-button:hover {
+    background: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media screen and (max-width: 1024px) {
+    .hero {
+        padding: 6rem 2rem 10rem;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .hero {
+        padding: 6rem 1rem 8rem;
+    }
+    
+    .hero-content {
+        gap: 0.4rem;
+    }
+    
+    .subtitle-date-group {
+        gap: 0.08rem;
+    }
+    
+    .museum-title {
+        font-size: 3rem;
+    }
+    
+    .subtitle {
+        font-size: 0.8rem;
+        letter-spacing: 0px;
+    }
+    
+    p.date {
+        font-size: 2.2rem !important;
+        letter-spacing: 1px;
+    }
+    
+    .footer-link {
+        font-size: 0.8rem;
+    }
+    
+    .main-header {
+        padding: 1.5rem 0;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .hero {
+        padding: 5rem 1rem 6rem;
+    }
+    
+    .hero-content {
+        gap: 0.3rem;
+    }
+    
+    .subtitle-date-group {
+        gap: 0.06rem;
+    }
+    
+    .museum-title {
+        font-size: 2.8rem;
+    }
+    
+    .subtitle {
+        font-size: 0.7rem;
+        letter-spacing: 0px;
+    }
+    
+    p.date {
+        font-size: 2rem !important;
+        letter-spacing: 0px;
+    }
+    
+    .main-header {
+        padding: 1rem 0;
+    }
+}
+
+@media screen and (max-width: 375px) {
+    .hero {
+        padding: 4rem 1rem 5rem;
+    }
+    
+    .hero-content {
+        gap: 0.2rem;
+    }
+    
+    .subtitle-date-group {
+        gap: 0.04rem;
+    }
+    
+    .museum-title {
+        font-size: 2.6rem;
+        line-height: 0.8;
+    }
+    
+    .subtitle {
+        font-size: 0.6rem;
+        letter-spacing: 0px;
+    }
+    
+    p.date {
+        font-size: 1.8rem !important;
+        letter-spacing: 0px;
+    }
+    
+    .main-header {
+        padding: 0.8rem 0;
+    }
+    
+    .rsvp-link {
+        font-size: 1rem;
+        letter-spacing: 6px;
+    }
+}
+
+/* iPhone SE specific (375x667) */
+@media screen and (max-width: 375px) and (max-height: 667px) {
+    .hero {
+        padding: 3rem 1rem 4rem;
+    }
+    
+    .hero-content {
+        gap: 0.15rem;
+    }
+    
+    .subtitle-date-group {
+        gap: 0.02rem;
+    }
+    
+    p.date {
+        font-size: 1.6rem !important;
+        letter-spacing: 0px;
+    }
+    
+    .museum-title {
+        font-size: 2.4rem;
+    }
+    
+    .subtitle {
+        font-size: 0.55rem;
+        letter-spacing: 0px;
+    }
+}
+
+/* Additional media queries for viewport height */
+@media screen and (min-height: 900px) {
+    .footer {
+        bottom: 6rem;
+    }
+}
+
+@media screen and (max-height: 600px) {
+    .footer {
+        bottom: 18rem;
+    }
+    
+    p.date {
+        font-size: 3rem !important;
+        margin-bottom: 1rem;
+    }
+}
+
+@media screen and (max-height: 500px) {
+    .footer {
+        bottom: 20rem;
+    }
+    
+    p.date {
+        font-size: 2.5rem !important;
+        margin-bottom: 0.5rem;
+    }
+    
+    .museum-title {
+        font-size: 2.5rem;
+    }
+    
+    .subtitle {
+        font-size: 0.8rem;
+        letter-spacing: 1px;
+    }
+}
