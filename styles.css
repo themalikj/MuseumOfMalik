@@ -36,15 +36,25 @@ body::before {
     width: 100vw;
     height: 100vh;
     height: 100dvh; /* Dynamic viewport height for modern browsers */
-    background: url('images/MOMBG.jpg?v=2') center/cover no-repeat;
-    background-attachment: fixed;
+    background: url('images/MOMBG.jpg?v=2') center center/cover no-repeat;
+    background-size: cover;
+    background-position: center center;
     z-index: -1;
 }
 
 /* iOS Safari specific fix */
 @supports (-webkit-touch-callout: none) {
     body::before {
-        height: -webkit-fill-available;
+        position: absolute;
+        height: 100%;
+        min-height: 100vh;
+        min-height: 100dvh;
+        width: 100%;
+        background-attachment: scroll;
+    }
+    
+    html, body {
+        height: 100%;
         min-height: 100vh;
         min-height: 100dvh;
     }
