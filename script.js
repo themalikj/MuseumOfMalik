@@ -14,6 +14,7 @@ rsvpButton.addEventListener('click', () => {
 closeModal.addEventListener('click', () => {
     rsvpModal.style.display = 'none';
     document.body.style.overflow = 'auto';
+    resetModalState();
 });
 
 // Close modal when clicking outside
@@ -21,6 +22,7 @@ window.addEventListener('click', (event) => {
     if (event.target === rsvpModal) {
         rsvpModal.style.display = 'none';
         document.body.style.overflow = 'auto';
+        resetModalState();
     }
 });
 
@@ -90,13 +92,8 @@ rsvpForm.addEventListener('submit', async (e) => {
         });
         
         if (response.ok) {
-            // Success
-            alert(`Thank you ${name}! Your RSVP has been submitted successfully. We'll see you at The Museum of Malik!`);
-            
-            // Close modal and reset form
-            rsvpModal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-            rsvpForm.reset();
+            // Success - directly show calendar options without alert
+            showCalendarOptions(name);
         } else {
             throw new Error('Network response was not ok');
         }
@@ -110,6 +107,117 @@ rsvpForm.addEventListener('submit', async (e) => {
         submitBtn.disabled = false;
     }
 });
+
+// Calendar functionality
+function showCalendarOptions(guestName) {
+    // Hide the form and show calendar buttons
+    document.getElementById('rsvpForm').style.display = 'none';
+    document.getElementById('calendarButtons').style.display = 'block';
+    
+    // Update modal title
+    const modalTitle = rsvpModal.querySelector('h2');
+    modalTitle.textContent = `Thank you, ${guestName}!`;
+    
+    // Update subtitle
+    const modalSubtitle = rsvpModal.querySelector('.modal-subtitle');
+    modalSubtitle.textContent = 'Your RSVP has been submitted successfully. We\'ll see you at The Museum of Malik! Add this event to your calendar:';
+}
+
+function generateGoogleCalendarUrl() {
+    const event = {
+        title: 'The Museum of Malik - A 30-Year Retrospective',
+        start: '20260425T230000Z', // April 25, 2026, 6:00 PM CDT = April 25 23:00 UTC
+        end: '20260426T030000Z',   // April 25, 2026, 10:00 PM CDT = April 26 03:00 UTC
+        details: 'Join us for an intimate exhibition celebrating three decades of artistic journey at The Museum of Malik.',
+        location: 'Studio Eight08, 808 Travis St, Houston, TX 77002'
+    };
+    
+    const baseUrl = 'https://calendar.google.com/calendar/render';
+    const params = new URLSearchParams({
+        action: 'TEMPLATE',
+        text: event.title,
+        dates: `${event.start}/${event.end}`,
+        details: event.details,
+        location: event.location
+    });
+    
+    return `${baseUrl}?${params.toString()}`;
+}
+
+function generateAppleCalendarUrl() {
+    const event = {
+        title: 'The Museum of Malik - A 30-Year Retrospective',
+        start: '20260425T230000Z', // April 25, 2026, 6:00 PM CDT = April 25 23:00 UTC
+        end: '20260426T030000Z',   // April 25, 2026, 10:00 PM CDT = April 26 03:00 UTC
+        description: 'Join us for an intimate exhibition celebrating three decades of artistic journey at The Museum of Malik.',
+        location: 'Studio Eight08, 808 Travis St, Houston, TX 77002'
+    };
+    
+    // Create ICS content
+    const icsContent = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Museum of Malik//Event//EN
+BEGIN:VEVENT
+UID:museum-malik-${Date.now()}@studioeight08.co
+DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').split('.')[0]}Z
+DTSTART:${event.start}
+DTEND:${event.end}
+SUMMARY:${event.title}
+DESCRIPTION:${event.description}
+LOCATION:${event.location}
+END:VEVENT
+END:VCALENDAR`;
+    
+    return `data:text/calendar;charset=utf8,${encodeURIComponent(icsContent)}`;
+}
+
+// Calendar button event listeners
+document.addEventListener('DOMContentLoaded', () => {
+    const googleCalBtn = document.getElementById('googleCalBtn');
+    const appleCalBtn = document.getElementById('appleCalBtn');
+    
+    googleCalBtn.addEventListener('click', () => {
+        window.open(generateGoogleCalendarUrl(), '_blank');
+        // Close modal after a delay to allow calendar to open
+        setTimeout(() => {
+            rsvpModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            resetModalState();
+        }, 1000);
+    });
+    
+    appleCalBtn.addEventListener('click', () => {
+        const icsUrl = generateAppleCalendarUrl();
+        // Create a temporary link to download the ICS file
+        const link = document.createElement('a');
+        link.href = icsUrl;
+        link.download = 'museum-of-malik-event.ics';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Close modal after a delay
+        setTimeout(() => {
+            rsvpModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            resetModalState();
+        }, 1000);
+    });
+});
+
+function resetModalState() {
+    // Reset modal to original state
+    document.getElementById('rsvpForm').style.display = 'block';
+    document.getElementById('calendarButtons').style.display = 'none';
+    
+    const modalTitle = rsvpModal.querySelector('h2');
+    modalTitle.textContent = 'RSVP';
+    
+    const modalSubtitle = rsvpModal.querySelector('.modal-subtitle');
+    modalSubtitle.textContent = 'One guest per invitation';
+    
+    rsvpForm.reset();
+}
 
 // CTA Button interaction
 const ctaButton = document.querySelector('.cta-button');

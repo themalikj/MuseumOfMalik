@@ -75,8 +75,8 @@ JavaScript functionality including:
 
 ### Colors
 Main colors used in the design:
-- Primary: `#3498db` (blue)
-- Secondary: `#2c3e50` (dark blue)
+- Primary: `#6B8E23` (olive green)
+- Secondary: `#556B2F` (dark olive green)
 - Success: `#27ae60` (green)
 - Error: `#e74c3c` (red)
 

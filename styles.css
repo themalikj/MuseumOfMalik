@@ -74,6 +74,10 @@ body {
     padding: 2rem 0;
     z-index: 1001;
     text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: fadeInUpSlow 2.5s ease-out;
 }
 
 .rsvp-link {
@@ -86,10 +90,11 @@ body {
     cursor: pointer;
     transition: opacity 0.3s ease;
     font-weight: 300;
+    animation: fadeInUpSlow 3s ease-out;
 }
 
 .rsvp-link:hover {
-    opacity: 0.8;
+    opacity: 0.7;
 }
 
 /* Hero Section */
@@ -209,6 +214,7 @@ p.date {
     text-align: center;
     width: 100%;
     background: transparent;
+    animation: fadeInUpSlow 2.5s ease-out;
 }
 
 .footer-link {
@@ -287,14 +293,14 @@ p.date {
 .modal h2 {
     font-family: 'BrownSugar', cursive, sans-serif;
     font-size: 2.5rem;
-    color: #2c3e50;
+    color: #2d2d2d;
     text-align: center;
     margin-bottom: 0.5rem;
 }
 
 .modal-subtitle {
     text-align: center;
-    color: #666;
+    color: #404040;
     margin-bottom: 2rem;
     font-style: italic;
 }
@@ -313,7 +319,7 @@ p.date {
 .form-group label {
     font-family: 'Inter', sans-serif;
     font-weight: 500;
-    color: #2c3e50;
+    color: #2d2d2d;
     margin-bottom: 0.5rem;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -323,7 +329,7 @@ p.date {
 .form-group input,
 .form-group textarea {
     padding: 1rem;
-    border: 2px solid #e1e8ed;
+    border: 2px solid #c9d4a8;
     border-radius: 5px;
     font-size: 1rem;
     font-family: 'Inter', sans-serif;
@@ -333,11 +339,11 @@ p.date {
 .form-group input:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: #3498db;
+    border-color: #6B8E23;
 }
 
 .submit-btn {
-    background: #2c3e50;
+    background: #6B8E23 !important;
     color: white;
     border: none;
     padding: 1rem 2rem;
@@ -353,7 +359,92 @@ p.date {
 }
 
 .submit-btn:hover {
-    background: #34495e;
+    background: #556B2F !important;
+}
+
+/* Calendar Section Styles */
+.calendar-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #c9d4a8;
+    text-align: center;
+}
+
+.calendar-section h3 {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #2d2d2d;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.5px;
+}
+
+.calendar-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.calendar-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.5rem;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    min-width: 160px;
+    justify-content: center;
+}
+
+.calendar-btn svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.google-cal {
+    background: #6B8E23;
+    color: white;
+    border-color: #6B8E23;
+}
+
+.google-cal:hover {
+    background: #556B2F;
+    border-color: #556B2F;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(107, 142, 35, 0.3);
+}
+
+.apple-cal {
+    background: #6B8E23;
+    color: white;
+    border-color: #6B8E23;
+}
+
+.apple-cal:hover {
+    background: #556B2F;
+    border-color: #556B2F;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(107, 142, 35, 0.3);
+}
+
+@media screen and (max-width: 480px) {
+    .calendar-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .calendar-btn {
+        width: 100%;
+        max-width: 280px;
+    }
 }
 
 /* Responsive Design */
