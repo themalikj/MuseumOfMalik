@@ -120,7 +120,8 @@ function showCalendarOptions(guestName) {
     
     // Update subtitle
     const modalSubtitle = rsvpModal.querySelector('.modal-subtitle');
-    modalSubtitle.textContent = 'Your RSVP has been submitted successfully. We\'ll see you at The Museum of Malik! Add this event to your calendar:';
+    modalSubtitle.textContent = 'Your RSVP has been submitted successfully. We\'ll see you at The Museum of Malik!\n\nSaturday, April 25, 2026 • 6:00 PM - 10:00 PM\nStudio Eight08, 808 Travis St, Houston, TX';
+    modalSubtitle.style.whiteSpace = 'pre-line';
 }
 
 function generateGoogleCalendarUrl() {
@@ -217,13 +218,4 @@ function resetModalState() {
     modalSubtitle.textContent = 'One guest per invitation';
     
     rsvpForm.reset();
-}
-
-// CTA Button interaction
-const ctaButton = document.querySelector('.cta-button');
-if (ctaButton) {
-    ctaButton.addEventListener('click', () => {
-        // You can customize this action
-        alert('Welcome to the Museum of Malik!');
-    });
 }
