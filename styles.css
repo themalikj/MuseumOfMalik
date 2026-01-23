@@ -33,30 +33,45 @@ body::before {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
+    right: 0;
+    bottom: 0;
+    width: 100%;
     height: 100vh;
-    height: 100dvh; /* Dynamic viewport height for modern browsers */
+    height: 100svh; /* Small viewport height - excludes dynamic UI */
     background: url('images/MOMBG.jpg?v=2') center center/cover no-repeat;
     background-size: cover;
     background-position: center center;
     z-index: -1;
 }
 
+/* Mobile-specific background fixes */
+@media screen and (max-width: 768px) {
+    body::before {
+        position: fixed;
+        height: 100vh;
+        height: 100svh; /* Use small viewport height that accounts for UI bars */
+        background-attachment: fixed;
+    }
+    
+    html {
+        height: 100%;
+        height: 100svh;
+    }
+    
+    body {
+        min-height: 100vh;
+        min-height: 100svh;
+    }
+}
+
 /* iOS Safari specific fix */
 @supports (-webkit-touch-callout: none) {
     body::before {
-        position: absolute;
-        height: 100%;
-        min-height: 100vh;
-        min-height: 100dvh;
-        width: 100%;
+        position: fixed;
+        height: 100vh;
+        height: 100svh; /* Small viewport height for iOS */
+        width: 100vw;
         background-attachment: scroll;
-    }
-    
-    html, body {
-        height: 100%;
-        min-height: 100vh;
-        min-height: 100dvh;
     }
 }
 
@@ -483,33 +498,38 @@ p.date {
     }
     
     .hero-content {
-        gap: 0.3rem;
+        gap: 0.4rem;
     }
     
     .subtitle-date-group {
-        gap: 0.25rem;
+        gap: 0.4rem;
     }
     
     .museum-title {
-        font-size: 3rem;
+        font-size: 4.5rem;
     }
     
     .subtitle {
-        font-size: 0.8rem;
-        letter-spacing: 0.3rem;
+        font-size: 1.1rem;
+        letter-spacing: 0.4rem;
     }
     
     p.date {
-        font-size: 2.2rem !important;
-        letter-spacing: 0.15rem;
+        font-size: 3.5rem !important;
+        letter-spacing: 0.2rem;
     }
     
     .footer-link {
-        font-size: 0.8rem;
+        font-size: 0.9rem;
     }
     
     .main-header {
         padding: 1.5rem 0;
+    }
+    
+    .rsvp-link {
+        font-size: 1.3rem;
+        letter-spacing: 6px;
     }
 }
 
@@ -519,29 +539,34 @@ p.date {
     }
     
     .hero-content {
-        gap: 0.25rem;
+        gap: 0.4rem;
     }
     
     .subtitle-date-group {
-        gap: 0.2rem;
+        gap: 0.3rem;
     }
     
     .museum-title {
-        font-size: 2.8rem;
+        font-size: 4rem;
     }
     
     .subtitle {
-        font-size: 0.7rem;
-        letter-spacing: 0.2rem;
+        font-size: 1rem;
+        letter-spacing: 0.3rem;
     }
     
     p.date {
-        font-size: 2rem !important;
-        letter-spacing: 0.12rem;
+        font-size: 3rem !important;
+        letter-spacing: 0.15rem;
     }
     
     .main-header {
         padding: 1rem 0;
+    }
+    
+    .rsvp-link {
+        font-size: 1.2rem;
+        letter-spacing: 5px;
     }
 }
 
@@ -551,26 +576,26 @@ p.date {
     }
     
     .hero-content {
-        gap: 0.2rem;
+        gap: 0.3rem;
     }
     
     .subtitle-date-group {
-        gap: 0.18rem;
+        gap: 0.25rem;
     }
     
     .museum-title {
-        font-size: 2.6rem;
-        line-height: 0.8;
+        font-size: 3.5rem;
+        line-height: 0.85;
     }
     
     .subtitle {
-        font-size: 0.6rem;
-        letter-spacing: 0.15rem;
+        font-size: 0.9rem;
+        letter-spacing: 0.2rem;
     }
     
     p.date {
-        font-size: 1.8rem !important;
-        letter-spacing: 0.08rem;
+        font-size: 2.5rem !important;
+        letter-spacing: 0.1rem;
     }
     
     .main-header {
@@ -578,8 +603,8 @@ p.date {
     }
     
     .rsvp-link {
-        font-size: 1rem;
-        letter-spacing: 6px;
+        font-size: 1.1rem;
+        letter-spacing: 4px;
     }
 }
 
