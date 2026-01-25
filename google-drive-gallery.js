@@ -1,9 +1,12 @@
 class GoogleDriveGallery {
     constructor() {
         // Google Drive API Configuration
-        // NOTE: For HTTP domains, add your domain to Google Cloud Console:
+        // IMPORTANT: For production deployment to http://themuseumofmalik.com
         // Go to: https://console.cloud.google.com/apis/credentials
-        // Edit OAuth client ID and add your HTTP domain to "Authorized JavaScript origins"
+        // Edit OAuth client ID: 96355657028-fbtqno6ir4h1ca6ufbqbrr4heiqn00gk.apps.googleusercontent.com
+        // Add BOTH to "Authorized JavaScript origins":
+        //   - http://themuseumofmalik.com
+        //   - http://www.themuseumofmalik.com
         this.API_KEY = 'AIzaSyBqWZ78EOSh1knZ5yP3hzALGG00APOQJCQ';
         this.CLIENT_ID = '96355657028-fbtqno6ir4h1ca6ufbqbrr4heiqn00gk.apps.googleusercontent.com';
         this.FOLDER_ID = '103ev806ae7UjAaQ650QhnIsVIauFT4Fz';
@@ -638,7 +641,26 @@ class GoogleDriveGallery {
             
         } catch (error) {
             console.error('Upload failed:', error);
-            uploadStatus.innerHTML = `❌ Upload failed: ${error.message}<br><small>Please try again</small>`;
+            
+            // Provide user-friendly error messages
+            let userMessage = 'Upload failed';
+            if (error.message) {
+                if (error.message.includes('not loaded')) {
+                    userMessage = 'Google API not loaded. Please refresh the page.';
+                } else if (error.message.includes('cancelled') || error.message.includes('closed')) {
+                    userMessage = 'Sign-in cancelled. Please try again.';
+                } else if (error.message.includes('popup')) {
+                    userMessage = 'Popup blocked. Please allow popups for this site and try again.';
+                } else if (error.message.includes('OAuth') || error.message.includes('configuration')) {
+                    userMessage = 'Authentication setup issue. Please contact support.';
+                } else if (error.message.includes('denied')) {
+                    userMessage = 'Access denied. Please grant necessary permissions.';
+                } else {
+                    userMessage = error.message;
+                }
+            }
+            
+            uploadStatus.innerHTML = `❌ ${userMessage}<br><small>Please try again or contact support</small>`;
             uploadButton.disabled = false;
             uploadButton.style.opacity = '1';
         }
@@ -941,15 +963,22 @@ class GoogleDriveGallery {
             console.log(`🔐 Ensuring authentication (attempt ${this.authRetryCount + 1}/${this.maxAuthRetries})...`);
             
             if (typeof gapi === 'undefined') {
-                throw new Error('Google API not loaded');
+                throw new Error('Google API not loaded. Please refresh the page.');
             }
             
             // Reinitialize if needed
             if (!this.authInstance) {
                 await new Promise((resolve, reject) => {
+                    const timeout = setTimeout(() => reject(new Error('Google Auth load timeout')), 10000);
                     gapi.load('auth2:client', {
-                        callback: resolve,
-                        onerror: () => reject(new Error('Failed to load Google Auth'))
+                        callback: () => {
+                            clearTimeout(timeout);
+                            resolve();
+                        },
+                        onerror: () => {
+                            clearTimeout(timeout);
+                            reject(new Error('Failed to load Google Auth library'));
+                        }
                     });
                 });
                 
@@ -961,15 +990,31 @@ class GoogleDriveGallery {
                 });
                 
                 this.authInstance = gapi.auth2.getAuthInstance();
+                
+                if (!this.authInstance) {
+                    throw new Error('Failed to initialize Google Auth. Check OAuth configuration.');
+                }
             }
             
             // Check and sign in if needed
             if (!this.authInstance.isSignedIn.get()) {
                 console.log('📝 Signing in user...');
-                await this.authInstance.signIn({
-                    prompt: 'select_account'
-                });
-                console.log('✅ User signed in successfully');
+                try {
+                    await this.authInstance.signIn({
+                        prompt: 'select_account'
+                    });
+                    console.log('✅ User signed in successfully');
+                } catch (signInError) {
+                    if (signInError.error === 'popup_closed_by_user') {
+                        throw new Error('Sign-in cancelled. Please try again.');
+                    } else if (signInError.error === 'access_denied') {
+                        throw new Error('Access denied. Please grant permissions.');
+                    } else if (signInError.error === 'popup_blocked_by_browser') {
+                        throw new Error('Popup blocked. Please allow popups for this site.');
+                    } else {
+                        throw new Error(signInError.error || signInError.message || 'Sign-in failed');
+                    }
+                }
             }
             
             this.isSignedIn = true;
@@ -978,6 +1023,7 @@ class GoogleDriveGallery {
             
         } catch (error) {
             console.error('Authentication failed:', error);
+            const errorMessage = error.message || error.error || 'Unknown authentication error';
             this.authRetryCount++;
             
             if (this.authRetryCount < this.maxAuthRetries) {
@@ -986,7 +1032,7 @@ class GoogleDriveGallery {
                 return this.ensureAuthenticated();
             } else {
                 this.authRetryCount = 0;
-                throw new Error(`Authentication failed after ${this.maxAuthRetries} attempts: ${error.message}`);
+                throw new Error(`Authentication failed after ${this.maxAuthRetries} attempts: ${errorMessage}`);
             }
         }
     }
