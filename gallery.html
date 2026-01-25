@@ -38,6 +38,11 @@
         }
     </style>
     
+    <!-- Google APIs for Picker and simplified auth -->
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://apis.google.com/js/api.js?onload=onApiLoad" async defer></script>
+    
     <link rel="stylesheet" href="gallery-styles.css?v=2026012503">
 </head>
 <body>
@@ -45,7 +50,7 @@
         <!-- Navigation -->
         <nav class="gallery-nav">
             <div class="nav-controls">
-                <button id="uploadBtn" class="control-btn">Add Photos</button>
+                <button id="addPhotosBtn" class="control-btn">Add Photos</button>
                 <button id="playPauseBtn" class="control-btn">Pause</button>
                 <button id="fullscreenBtn" class="control-btn">Fullscreen</button>
             </div>
@@ -70,28 +75,6 @@
             <!-- Manual navigation -->
             <button class="slide-nav prev" id="prevBtn">‹</button>
             <button class="slide-nav next" id="nextBtn">›</button>
-        </div>
-
-        <!-- Upload Modal -->
-        <div class="upload-modal" id="uploadModal">
-            <div class="upload-content">
-                <span class="close-modal" id="closeModal">&times;</span>
-                <h3>Add Photos to Gallery</h3>
-                <div class="upload-area" id="uploadArea">
-                    <input type="file" id="fileInput" accept="image/*" multiple>
-                    <div class="upload-text">
-                        <p>Tap to select photos</p>
-                        <p>or drag and drop images here</p>
-                        <small>Supports: JPG, PNG, WebP, GIF</small>
-                    </div>
-                </div>
-                <div class="upload-progress" id="uploadProgress" style="display: none;">
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progressFill"></div>
-                    </div>
-                    <p id="progressText">Uploading...</p>
-                </div>
-            </div>
         </div>
 
         <!-- Info overlay -->
