@@ -641,26 +641,38 @@ class GoogleDriveGallery {
             
         } catch (error) {
             console.error('Upload failed:', error);
+            console.error('Error details:', {
+                message: error?.message,
+                error: error?.error,
+                toString: error?.toString(),
+                type: typeof error
+            });
             
             // Provide user-friendly error messages
             let userMessage = 'Upload failed';
-            if (error.message) {
-                if (error.message.includes('not loaded')) {
-                    userMessage = 'Google API not loaded. Please refresh the page.';
-                } else if (error.message.includes('cancelled') || error.message.includes('closed')) {
+            const errorText = error?.message || error?.error || (typeof error === 'string' ? error : '');
+            
+            if (errorText) {
+                if (errorText.includes('not loaded') || errorText.includes('API')) {
+                    userMessage = 'Google API not loaded. Please refresh the page and try again.';
+                } else if (errorText.includes('cancelled') || errorText.includes('closed')) {
                     userMessage = 'Sign-in cancelled. Please try again.';
-                } else if (error.message.includes('popup')) {
+                } else if (errorText.includes('popup') || errorText.includes('blocked')) {
                     userMessage = 'Popup blocked. Please allow popups for this site and try again.';
-                } else if (error.message.includes('OAuth') || error.message.includes('configuration')) {
-                    userMessage = 'Authentication setup issue. Please contact support.';
-                } else if (error.message.includes('denied')) {
-                    userMessage = 'Access denied. Please grant necessary permissions.';
+                } else if (errorText.includes('OAuth') || errorText.includes('configuration') || errorText.includes('origin')) {
+                    userMessage = 'Authentication configuration issue. The domain may not be authorized in Google Cloud Console.';
+                } else if (errorText.includes('denied') || errorText.includes('permission')) {
+                    userMessage = 'Access denied. Please grant necessary permissions and try again.';
+                } else if (errorText.includes('attempts')) {
+                    userMessage = 'Authentication failed after multiple attempts. Please refresh the page and try again.';
                 } else {
-                    userMessage = error.message;
+                    userMessage = errorText;
                 }
+            } else {
+                userMessage = 'An unexpected error occurred. Please refresh the page and try again.';
             }
             
-            uploadStatus.innerHTML = `❌ ${userMessage}<br><small>Please try again or contact support</small>`;
+            uploadStatus.innerHTML = `❌ ${userMessage}<br><small>If this persists, please contact support</small>`;
             uploadButton.disabled = false;
             uploadButton.style.opacity = '1';
         }
@@ -1023,7 +1035,20 @@ class GoogleDriveGallery {
             
         } catch (error) {
             console.error('Authentication failed:', error);
-            const errorMessage = error.message || error.error || 'Unknown authentication error';
+            console.error('Error type:', typeof error, 'Error details:', error);
+            
+            // Extract error message safely
+            let errorMessage = 'Authentication failed';
+            if (error?.message) {
+                errorMessage = error.message;
+            } else if (error?.error) {
+                errorMessage = error.error;
+            } else if (typeof error === 'string') {
+                errorMessage = error;
+            } else if (error?.toString && typeof error.toString === 'function') {
+                errorMessage = error.toString();
+            }
+            
             this.authRetryCount++;
             
             if (this.authRetryCount < this.maxAuthRetries) {
