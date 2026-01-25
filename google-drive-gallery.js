@@ -653,33 +653,69 @@ class GoogleDriveGallery {
             const errorText = error?.message || error?.error || (typeof error === 'string' ? error : '');
             const currentOrigin = window.location.origin;
             
-            // Show detailed error information on screen for debugging
-            uploadStatus.innerHTML = `
-                <div style="text-align: left; font-size: 0.85rem; line-height: 1.4;">
-                    <div style="color: #ff6b6b; font-weight: bold; margin-bottom: 0.5rem;">❌ Upload Failed</div>
-                    <div style="background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 4px; margin-bottom: 0.5rem;">
-                        <div style="font-weight: bold; margin-bottom: 0.25rem;">Error Message:</div>
-                        <div style="color: #ffaa44; word-break: break-word;">${errorText || 'No error message available'}</div>
-                    </div>
-                    <div style="background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 4px; margin-bottom: 0.5rem;">
-                        <div style="font-weight: bold; margin-bottom: 0.25rem;">Current Origin:</div>
-                        <div style="color: #88ccff;">${currentOrigin}</div>
-                    </div>
-                    <div style="background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 4px; margin-bottom: 0.5rem;">
-                        <div style="font-weight: bold; margin-bottom: 0.25rem;">Error Type:</div>
-                        <div style="color: #cccccc;">${typeof error}</div>
-                    </div>
-                    ${error?.error ? `
-                        <div style="background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 4px; margin-bottom: 0.5rem;">
-                            <div style="font-weight: bold; margin-bottom: 0.25rem;">Error Code:</div>
-                            <div style="color: #ff9999;">${error.error}</div>
+            // Special handling for idpiframe_initialization_failed
+            if (errorText.includes('idpiframe_initialization_failed')) {
+                uploadStatus.innerHTML = `
+                    <div style="text-align: left; font-size: 0.85rem; line-height: 1.5;">
+                        <div style="color: #ff6b6b; font-weight: bold; margin-bottom: 0.75rem;">❌ OAuth Configuration Issue</div>
+                        
+                        <div style="background: rgba(255,107,107,0.2); padding: 0.75rem; border-radius: 4px; margin-bottom: 0.75rem; border-left: 3px solid #ff6b6b;">
+                            <div style="font-weight: bold; margin-bottom: 0.5rem;">Current Domain:</div>
+                            <div style="color: #ffaa44; margin-bottom: 0.75rem;">${currentOrigin}</div>
+                            
+                            <div style="font-weight: bold; margin-bottom: 0.5rem;">Required Fix:</div>
+                            <div style="color: white;">
+                                1. Go to <a href="https://console.cloud.google.com/apis/credentials" target="_blank" style="color: #88ccff;">Google Cloud Console</a><br>
+                                2. Click OAuth 2.0 Client ID: <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 3px; font-size: 0.75rem;">96355657028-fbtqno6ir4h1ca6ufbqbrr4heiqn00gk</code><br>
+                                3. Under "Authorized JavaScript origins", make sure EXACTLY this is listed:<br>
+                                <code style="background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 3px; display: inline-block; margin: 0.5rem 0; color: #88ccff;">${currentOrigin}</code><br>
+                                4. Click SAVE<br>
+                                5. Wait 5-10 minutes for Google to update<br>
+                                6. Clear browser cache and cookies<br>
+                                7. Try again
+                            </div>
                         </div>
-                    ` : ''}
-                    <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 0.75rem;">
-                        Copy this error info and share it to get help fixing the issue.
+                        
+                        <div style="background: rgba(255,170,68,0.2); padding: 0.75rem; border-radius: 4px; border-left: 3px solid #ffaa44;">
+                            <div style="font-weight: bold; margin-bottom: 0.5rem;">⚠️ Common Issues:</div>
+                            <div style="font-size: 0.8rem;">
+                                • Make sure it's <strong>http://</strong> not https://<br>
+                                • No trailing slash at the end<br>
+                                • Enable third-party cookies in browser<br>
+                                • Domain was just added? Wait 10 minutes
+                            </div>
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
+            } else {
+                // Show detailed error information on screen for debugging
+                uploadStatus.innerHTML = `
+                    <div style="text-align: left; font-size: 0.85rem; line-height: 1.4;">
+                        <div style="color: #ff6b6b; font-weight: bold; margin-bottom: 0.5rem;">❌ Upload Failed</div>
+                        <div style="background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 4px; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; margin-bottom: 0.25rem;">Error Message:</div>
+                            <div style="color: #ffaa44; word-break: break-word;">${errorText || 'No error message available'}</div>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 4px; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; margin-bottom: 0.25rem;">Current Origin:</div>
+                            <div style="color: #88ccff;">${currentOrigin}</div>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 4px; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; margin-bottom: 0.25rem;">Error Type:</div>
+                            <div style="color: #cccccc;">${typeof error}</div>
+                        </div>
+                        ${error?.error ? `
+                            <div style="background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 4px; margin-bottom: 0.5rem;">
+                                <div style="font-weight: bold; margin-bottom: 0.25rem;">Error Code:</div>
+                                <div style="color: #ff9999;">${error.error}</div>
+                            </div>
+                        ` : ''}
+                        <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 0.75rem;">
+                            Copy this error info and share it to get help fixing the issue.
+                        </div>
+                    </div>
+                `;
+            }
             uploadButton.disabled = false;
             uploadButton.style.opacity = '1';
         }
