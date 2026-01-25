@@ -657,33 +657,41 @@ class GoogleDriveGallery {
             if (errorText.includes('idpiframe_initialization_failed')) {
                 uploadStatus.innerHTML = `
                     <div style="text-align: left; font-size: 0.85rem; line-height: 1.5;">
-                        <div style="color: #ff6b6b; font-weight: bold; margin-bottom: 0.75rem;">❌ OAuth Configuration Issue</div>
+                        <div style="color: #ff6b6b; font-weight: bold; margin-bottom: 0.75rem;">❌ Browser Security Blocking Upload</div>
                         
-                        <div style="background: rgba(255,107,107,0.2); padding: 0.75rem; border-radius: 4px; margin-bottom: 0.75rem; border-left: 3px solid #ff6b6b;">
-                            <div style="font-weight: bold; margin-bottom: 0.5rem;">Current Domain:</div>
-                            <div style="color: #ffaa44; margin-bottom: 0.75rem;">${currentOrigin}</div>
-                            
-                            <div style="font-weight: bold; margin-bottom: 0.5rem;">Required Fix:</div>
-                            <div style="color: white;">
-                                1. Go to <a href="https://console.cloud.google.com/apis/credentials" target="_blank" style="color: #88ccff;">Google Cloud Console</a><br>
-                                2. Click OAuth 2.0 Client ID: <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 3px; font-size: 0.75rem;">96355657028-fbtqno6ir4h1ca6ufbqbrr4heiqn00gk</code><br>
-                                3. Under "Authorized JavaScript origins", make sure EXACTLY this is listed:<br>
-                                <code style="background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 3px; display: inline-block; margin: 0.5rem 0; color: #88ccff;">${currentOrigin}</code><br>
-                                4. Click SAVE<br>
-                                5. Wait 5-10 minutes for Google to update<br>
-                                6. Clear browser cache and cookies<br>
-                                7. Try again
+                        <div style="background: rgba(76,175,80,0.2); padding: 0.75rem; border-radius: 4px; margin-bottom: 0.75rem; border-left: 3px solid #4CAF50;">
+                            <div style="font-weight: bold; margin-bottom: 0.5rem;">✅ EASIEST FIX - Use Incognito/Private Mode:</div>
+                            <div style="color: white; font-size: 0.9rem;">
+                                1. Open this page in <strong>Incognito/Private window</strong><br>
+                                2. Try upload again - it will likely work there<br>
+                                3. This bypasses browser security restrictions
                             </div>
                         </div>
                         
-                        <div style="background: rgba(255,170,68,0.2); padding: 0.75rem; border-radius: 4px; border-left: 3px solid #ffaa44;">
-                            <div style="font-weight: bold; margin-bottom: 0.5rem;">⚠️ Common Issues:</div>
-                            <div style="font-size: 0.8rem;">
-                                • Make sure it's <strong>http://</strong> not https://<br>
-                                • No trailing slash at the end<br>
-                                • Enable third-party cookies in browser<br>
-                                • Domain was just added? Wait 10 minutes
+                        <div style="background: rgba(255,170,68,0.2); padding: 0.75rem; border-radius: 4px; margin-bottom: 0.75rem; border-left: 3px solid #ffaa44;">
+                            <div style="font-weight: bold; margin-bottom: 0.5rem;">🔧 Alternative - Enable Third-Party Cookies:</div>
+                            <div style="color: white; font-size: 0.8rem;">
+                                <strong>Chrome/Edge:</strong> Settings → Privacy → Cookies → "Allow all cookies"<br>
+                                <strong>Safari:</strong> Settings → Privacy → Uncheck "Prevent cross-site tracking"<br>
+                                <strong>Firefox:</strong> Settings → Privacy → "Standard" protection<br>
+                                Then <strong>hard refresh</strong> (Ctrl+Shift+R / Cmd+Shift+R)
                             </div>
+                        </div>
+                        
+                        <div style="background: rgba(136,204,255,0.2); padding: 0.75rem; border-radius: 4px; border-left: 3px solid #88ccff;">
+                            <div style="font-weight: bold; margin-bottom: 0.5rem;">📁 Direct Upload Option:</div>
+                            <div style="color: white; font-size: 0.85rem; margin-bottom: 0.5rem;">
+                                If neither above works, upload directly to Google Drive:
+                            </div>
+                            <a href="https://drive.google.com/drive/folders/${this.FORM_FOLDER_ID}" 
+                               target="_blank"
+                               style="display: inline-block; background: #4285F4; color: white; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-weight: bold;">
+                                📤 Open Google Drive Folder
+                            </a>
+                        </div>
+                        
+                        <div style="margin-top: 0.75rem; padding: 0.5rem; background: rgba(0,0,0,0.3); border-radius: 4px; font-size: 0.75rem; opacity: 0.7;">
+                            Domain: <code style="color: #88ccff;">${currentOrigin}</code> • Error: idpiframe_initialization_failed
                         </div>
                     </div>
                 `;
