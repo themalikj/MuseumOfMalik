@@ -100,8 +100,9 @@ class GoogleDriveGallery {
                 return {
                     id: file.id,
                     name: file.name,
-                    url: `https://drive.google.com/uc?export=view&id=${file.id}`,
-                    altUrl: `https://drive.google.com/thumbnail?id=${file.id}&sz=w2000-h2000`,
+                    url: `https://drive.usercontent.google.com/download?id=${file.id}&export=view`,
+                    altUrl: `https://drive.google.com/uc?export=view&id=${file.id}`,
+                    thirdUrl: `https://lh3.googleusercontent.com/d/${file.id}=w2000-h2000`,
                     createdTime: file.createdTime
                 };
             });
@@ -142,7 +143,7 @@ class GoogleDriveGallery {
             const urls = [
                 photo.url,
                 photo.altUrl,
-                `https://lh3.googleusercontent.com/d/${photo.id}=w2000-h2000`,
+                photo.thirdUrl,
                 `https://drive.google.com/uc?export=download&id=${photo.id}`
             ];
             

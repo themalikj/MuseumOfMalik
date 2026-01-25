@@ -200,7 +200,7 @@ body {
 /* Info overlay */
 .info-overlay {
     position: fixed;
-    bottom: 2rem;
+    bottom: 1rem;
     left: 2rem;
     z-index: 1000;
     background: rgba(0, 0, 0, 0.6);
@@ -296,6 +296,9 @@ body {
     font-size: 1.5rem;
     font-weight: 500;
     font-family: 'TanMonCheri', cursive, sans-serif;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .upload-area {
@@ -366,6 +369,20 @@ body {
 }
 
 /* Mobile optimizations for upload */
+@media screen and (max-width: 1024px) {
+    .info-overlay {
+        top: 1rem;
+        bottom: auto;
+        left: 1rem;
+        right: 1rem;
+        max-width: none;
+    }
+    
+    .upload-content h3 {
+        font-size: 1.3rem;
+    }
+}
+
 @media screen and (max-width: 768px) {
     .upload-content {
         min-width: 300px;
@@ -387,6 +404,40 @@ body {
     .control-btn {
         padding: 0.4rem 0.6rem;
         font-size: 0.8rem;
+    }
+    
+    .info-overlay {
+        padding: 0.75rem;
+    }
+    
+    .info-overlay h3 {
+        font-size: 1rem;
+        margin-bottom: 0.3rem;
+    }
+    
+    .info-overlay p {
+        font-size: 0.8rem;
+    }
+    
+    .update-time {
+        font-size: 0.7rem !important;
+    }
+    
+    .slide-counter {
+        bottom: 10rem;
+        right: 1rem;
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+    
+    .upload-content h3 {
+        font-size: 1.1rem;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .upload-content h3 {
+        font-size: 1rem;
     }
 }
 
