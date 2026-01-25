@@ -974,12 +974,31 @@ class GoogleDriveGallery {
         try {
             console.log(`🔐 Ensuring authentication (attempt ${this.authRetryCount + 1}/${this.maxAuthRetries})...`);
             
+            // Log current domain for debugging
+            const currentOrigin = window.location.origin;
+            console.log(`🌐 Current origin: ${currentOrigin}`);
+            
+            // Warn if domain might not be authorized
+            const authorizedDomains = [
+                'http://themuseumofmalik.com',
+                'http://www.themuseumofmalik.com',
+                'http://localhost:8000',
+                'http://127.0.0.1:8000'
+            ];
+            
+            if (!authorizedDomains.some(domain => currentOrigin.startsWith(domain.split(':')[0] + ':' + currentOrigin.split(':')[1] + ':' + currentOrigin.split(':')[2]))) {
+                console.warn(`⚠️ Current domain ${currentOrigin} may not be authorized in Google Cloud Console`);
+                console.warn('Add this domain to OAuth 2.0 Client ID authorized origins:');
+                console.warn(`https://console.cloud.google.com/apis/credentials/oauthclient/${this.CLIENT_ID.split('-')[0]}`);
+            }
+            
             if (typeof gapi === 'undefined') {
                 throw new Error('Google API not loaded. Please refresh the page.');
             }
             
             // Reinitialize if needed
             if (!this.authInstance) {
+                console.log('🔄 Initializing Google Auth...');
                 await new Promise((resolve, reject) => {
                     const timeout = setTimeout(() => reject(new Error('Google Auth load timeout')), 10000);
                     gapi.load('auth2:client', {
@@ -994,6 +1013,7 @@ class GoogleDriveGallery {
                     });
                 });
                 
+                console.log('⚙️ Initializing Google Client...');
                 await gapi.client.init({
                     apiKey: this.API_KEY,
                     clientId: this.CLIENT_ID,
@@ -1006,25 +1026,33 @@ class GoogleDriveGallery {
                 if (!this.authInstance) {
                     throw new Error('Failed to initialize Google Auth. Check OAuth configuration.');
                 }
+                
+                console.log('✅ Google Auth instance created');
             }
             
             // Check and sign in if needed
             if (!this.authInstance.isSignedIn.get()) {
-                console.log('📝 Signing in user...');
+                console.log('📝 Prompting user to sign in...');
                 try {
                     await this.authInstance.signIn({
                         prompt: 'select_account'
                     });
                     console.log('✅ User signed in successfully');
                 } catch (signInError) {
+                    console.error('❌ Sign-in error:', signInError);
+                    
+                    // Handle specific Google OAuth errors
                     if (signInError.error === 'popup_closed_by_user') {
                         throw new Error('Sign-in cancelled. Please try again.');
                     } else if (signInError.error === 'access_denied') {
                         throw new Error('Access denied. Please grant permissions.');
                     } else if (signInError.error === 'popup_blocked_by_browser') {
                         throw new Error('Popup blocked. Please allow popups for this site.');
+                    } else if (signInError.error === 'idpiframe_initialization_failed') {
+                        throw new Error(`OAuth configuration error. The domain ${currentOrigin} must be added to Google Cloud Console authorized JavaScript origins.`);
                     } else {
-                        throw new Error(signInError.error || signInError.message || 'Sign-in failed');
+                        const errorMsg = signInError.error || signInError.message || JSON.stringify(signInError);
+                        throw new Error(`Sign-in failed: ${errorMsg}`);
                     }
                 }
             }
@@ -1034,7 +1062,7 @@ class GoogleDriveGallery {
             return true;
             
         } catch (error) {
-            console.error('Authentication failed:', error);
+            console.error('❌ Authentication failed:', error);
             console.error('Error type:', typeof error, 'Error details:', error);
             
             // Extract error message safely
@@ -1051,14 +1079,18 @@ class GoogleDriveGallery {
             
             this.authRetryCount++;
             
-            if (this.authRetryCount < this.maxAuthRetries) {
-                console.log(`🔄 Retrying authentication in 2 seconds... (${this.authRetryCount}/${this.maxAuthRetries})`);
-                await new Promise(resolve => setTimeout(resolve, 2000));
-                return this.ensureAuthenticated();
-            } else {
+            // Don't retry on user cancellation or configuration errors
+            const noRetryErrors = ['cancelled', 'closed', 'denied', 'blocked', 'idpiframe', 'origin'];
+            const shouldNotRetry = noRetryErrors.some(keyword => errorMessage.toLowerCase().includes(keyword));
+            
+            if (shouldNotRetry || this.authRetryCount >= this.maxAuthRetries) {
                 this.authRetryCount = 0;
-                throw new Error(`Authentication failed after ${this.maxAuthRetries} attempts: ${errorMessage}`);
+                throw new Error(errorMessage);
             }
+            
+            console.log(`🔄 Retrying authentication in 2 seconds... (${this.authRetryCount}/${this.maxAuthRetries})`);
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            return this.ensureAuthenticated();
         }
     }
     
