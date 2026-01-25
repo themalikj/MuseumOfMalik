@@ -645,34 +645,41 @@ class GoogleDriveGallery {
                 message: error?.message,
                 error: error?.error,
                 toString: error?.toString(),
-                type: typeof error
+                type: typeof error,
+                fullError: error
             });
             
-            // Provide user-friendly error messages
-            let userMessage = 'Upload failed';
+            // Extract all error information for display
             const errorText = error?.message || error?.error || (typeof error === 'string' ? error : '');
+            const currentOrigin = window.location.origin;
             
-            if (errorText) {
-                if (errorText.includes('not loaded') || errorText.includes('API')) {
-                    userMessage = 'Google API not loaded. Please refresh the page and try again.';
-                } else if (errorText.includes('cancelled') || errorText.includes('closed')) {
-                    userMessage = 'Sign-in cancelled. Please try again.';
-                } else if (errorText.includes('popup') || errorText.includes('blocked')) {
-                    userMessage = 'Popup blocked. Please allow popups for this site and try again.';
-                } else if (errorText.includes('OAuth') || errorText.includes('configuration') || errorText.includes('origin')) {
-                    userMessage = 'Authentication configuration issue. The domain may not be authorized in Google Cloud Console.';
-                } else if (errorText.includes('denied') || errorText.includes('permission')) {
-                    userMessage = 'Access denied. Please grant necessary permissions and try again.';
-                } else if (errorText.includes('attempts')) {
-                    userMessage = 'Authentication failed after multiple attempts. Please refresh the page and try again.';
-                } else {
-                    userMessage = errorText;
-                }
-            } else {
-                userMessage = 'An unexpected error occurred. Please refresh the page and try again.';
-            }
-            
-            uploadStatus.innerHTML = `❌ ${userMessage}<br><small>If this persists, please contact support</small>`;
+            // Show detailed error information on screen for debugging
+            uploadStatus.innerHTML = `
+                <div style="text-align: left; font-size: 0.85rem; line-height: 1.4;">
+                    <div style="color: #ff6b6b; font-weight: bold; margin-bottom: 0.5rem;">❌ Upload Failed</div>
+                    <div style="background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 4px; margin-bottom: 0.5rem;">
+                        <div style="font-weight: bold; margin-bottom: 0.25rem;">Error Message:</div>
+                        <div style="color: #ffaa44; word-break: break-word;">${errorText || 'No error message available'}</div>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 4px; margin-bottom: 0.5rem;">
+                        <div style="font-weight: bold; margin-bottom: 0.25rem;">Current Origin:</div>
+                        <div style="color: #88ccff;">${currentOrigin}</div>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 4px; margin-bottom: 0.5rem;">
+                        <div style="font-weight: bold; margin-bottom: 0.25rem;">Error Type:</div>
+                        <div style="color: #cccccc;">${typeof error}</div>
+                    </div>
+                    ${error?.error ? `
+                        <div style="background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 4px; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; margin-bottom: 0.25rem;">Error Code:</div>
+                            <div style="color: #ff9999;">${error.error}</div>
+                        </div>
+                    ` : ''}
+                    <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 0.75rem;">
+                        Copy this error info and share it to get help fixing the issue.
+                    </div>
+                </div>
+            `;
             uploadButton.disabled = false;
             uploadButton.style.opacity = '1';
         }
