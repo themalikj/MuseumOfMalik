@@ -1,5 +1,3 @@
-// Super Simple Google Drive Gallery - Works with existing gallery.html structure
-
 class SimpleGallery {
     constructor() {
         this.API_KEY = 'AIzaSyBKRnyiRv9uENh38fwuixbL7lRaOhFb-nE';
@@ -11,77 +9,75 @@ class SimpleGallery {
     }
 
     async init() {
-        console.log('Loading photos from Google Drive...');
-        
-        // Show loading in the existing container
         const container = document.getElementById('slidesContainer');
         if (container) {
-            container.innerHTML = '<div class="slide active"><div class="loading-message"><h2>Loading photos...</h2></div></div>';
+            container.innerHTML = '<div style="color: white; text-align: center; padding: 2rem; background: black; height: 100vh; display: flex; align-items: center; justify-content: center;"><h2>Loading photos...</h2></div>';
         }
         
         try {
-            // Use a simpler API call that should work better
             const url = `https://www.googleapis.com/drive/v3/files?q='${this.FOLDER_ID}' in parents and mimeType contains 'image'&key=${this.API_KEY}&fields=files(id,name,mimeType)`;
-            console.log('API URL:', url);
-            
             const response = await fetch(url);
             const data = await response.json();
             
-            console.log('API Response:', data);
-            
             if (data.error) {
-                console.error('API Error:', data.error);
                 this.showError(`Error: ${data.error.message}`);
                 return;
             }
 
             this.photos = data.files || [];
-            console.log(`Found ${this.photos.length} photos`);
             
             if (this.photos.length === 0) {
                 this.showError('No images found in the folder.');
                 return;
             }
 
-            this.createSlides();
+            await this.createSlides();
             this.setupControls();
         } catch (error) {
-            console.error('Error:', error);
-            this.showError('Failed to load photos. Check console for details.');
+            this.showError('Failed to load photos.');
         }
     }
 
-    createSlides() {
+    async createSlides() {
         const container = document.getElementById('slidesContainer');
-        if (!container) {
-            console.error('Slides container not found');
-            return;
-        }
+        if (!container) return;
         
         container.innerHTML = '';
+        container.style.cssText = 'width: 100%; height: 100vh; background: black; position: relative;';
         
-        this.photos.forEach((photo, index) => {
-            const slide = document.createElement('div');
-            slide.className = 'slide';
-            slide.style.display = index === 0 ? 'block' : 'none';
+        for (let i = 0; i < this.photos.length; i++) {
+            const photo = this.photos[i];
             
-            // Try different Google Drive URL formats
-            const imageUrl = `https://lh3.googleusercontent.com/d/${photo.id}=w2000-h2000`;
-            
-            slide.innerHTML = `
-                <img src="${imageUrl}" 
-                     alt="${photo.name}" 
-                     style="width: 100%; height: 100vh; object-fit: contain; background: black;"
-                     onerror="this.src='https://drive.google.com/uc?export=view&id=${photo.id}'"
-                     onload="console.log('Image loaded: ${photo.name}')"
-                />
-            `;
-            
-            container.appendChild(slide);
-        });
+            try {
+                const response = await fetch(`https://www.googleapis.com/drive/v3/files/${photo.id}?alt=media&key=${this.API_KEY}`);
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const imageUrl = URL.createObjectURL(blob);
+                    
+                    const img = document.createElement('img');
+                    img.src = imageUrl;
+                    img.alt = photo.name;
+                    img.style.cssText = `
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100vw;
+                        height: 100vh;
+                        object-fit: contain;
+                        background: black;
+                        display: ${i === 0 ? 'block' : 'none'};
+                        z-index: ${i + 1};
+                    `;
+                    
+                    container.appendChild(img);
+                }
+            } catch (error) {
+                // Skip failed images
+            }
+        }
         
         this.updateCounters();
-        console.log(`Created ${this.photos.length} slides`);
     }
 
     setupControls() {
@@ -89,23 +85,15 @@ class SimpleGallery {
         const nextBtn = document.getElementById('nextBtn');
         const playPauseBtn = document.getElementById('playPauseBtn');
         
-        if (prevBtn) {
-            prevBtn.onclick = () => this.prev();
-        }
-        
-        if (nextBtn) {
-            nextBtn.onclick = () => this.next();
-        }
-        
+        if (prevBtn) prevBtn.onclick = () => this.prev();
+        if (nextBtn) nextBtn.onclick = () => this.next();
         if (playPauseBtn) {
             playPauseBtn.onclick = () => this.toggleSlideshow();
             playPauseBtn.textContent = 'Pause';
         }
         
-        // Start auto slideshow
         this.startSlideshow();
         
-        // Keyboard controls
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowLeft') this.prev();
             if (e.key === 'ArrowRight') this.next();
@@ -117,10 +105,13 @@ class SimpleGallery {
     }
 
     showSlide(index) {
-        const slides = document.querySelectorAll('.slide');
-        slides.forEach((slide, i) => {
-            slide.style.display = i === index ? 'block' : 'none';
+        const container = document.getElementById('slidesContainer');
+        const images = container.querySelectorAll('img');
+        
+        images.forEach((img, i) => {
+            img.style.display = i === index ? 'block' : 'none';
         });
+        
         this.currentIndex = index;
         this.updateCounters();
     }
@@ -174,14 +165,11 @@ class SimpleGallery {
         const container = document.getElementById('slidesContainer');
         if (container) {
             container.innerHTML = `
-                <div class="slide active">
-                    <div class="loading-message" style="color: #ff6b6b; text-align: center; padding: 2rem;">
+                <div style="color: #ff6b6b; text-align: center; padding: 2rem; background: black; height: 100vh; display: flex; align-items: center; justify-content: center;">
+                    <div>
                         <h2>⚠️ Gallery Error</h2>
                         <p>${message}</p>
-                        <button onclick="location.reload()" style="
-                            background: #007bff; color: white; border: none; 
-                            padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 1rem;
-                        ">Retry</button>
+                        <button onclick="location.reload()" style="background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 1rem;">Retry</button>
                     </div>
                 </div>
             `;
@@ -189,8 +177,6 @@ class SimpleGallery {
     }
 }
 
-// Auto-start when page loads
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM loaded, starting gallery...');
     window.gallery = new SimpleGallery();
 });
