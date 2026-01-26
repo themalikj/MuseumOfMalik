@@ -47,7 +47,7 @@
     <div class="background-overlay"></div>
     
     <header class="main-header">
-        <div class="rsvp-link" id="rsvpButton">R S V P</div>
+        <div class="rsvp-link" id="rsvpButton" onclick="openRSVPModal()">R S V P</div>
     </header>
 
     <main>
@@ -126,10 +126,20 @@
     </div>
 
     <script>
-        // Dynamic cache busting for JavaScript
-        const script = document.createElement('script');
-        script.src = `script.js?v=${Date.now()}`;
-        document.body.appendChild(script);
+        // Simple direct function to open RSVP modal
+        function openRSVPModal() {
+            console.log('🖱️ Opening RSVP modal');
+            const modal = document.getElementById('rsvpModal');
+            if (modal) {
+                modal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                console.log('✅ Modal opened');
+            } else {
+                console.error('❌ Modal not found');
+            }
+        }
     </script>
+
+    <script src="script.js"></script>
 </body>
 </html>

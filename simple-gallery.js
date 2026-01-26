@@ -81,16 +81,15 @@ class SimpleGallery {
     }
 
     setupControls() {
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
         const playPauseBtn = document.getElementById('playPauseBtn');
         
-        if (prevBtn) prevBtn.onclick = () => this.prev();
-        if (nextBtn) nextBtn.onclick = () => this.next();
         if (playPauseBtn) {
             playPauseBtn.onclick = () => this.toggleSlideshow();
             playPauseBtn.textContent = 'Pause';
         }
+        
+        // Setup swipe controls for all devices
+        this.setupSwipeControls();
         
         this.startSlideshow();
         
@@ -102,6 +101,34 @@ class SimpleGallery {
                 this.toggleSlideshow();
             }
         });
+    }
+
+    setupSwipeControls() {
+        const container = document.getElementById('slidesContainer');
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        container.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+        
+        container.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            this.handleSwipe(touchStartX, touchEndX);
+        });
+    }
+
+    handleSwipe(startX, endX) {
+        const minSwipeDistance = 50;
+        const swipeDistance = Math.abs(endX - startX);
+        
+        if (swipeDistance > minSwipeDistance) {
+            if (endX < startX) {
+                this.next(); // Swipe left = next image
+            } else {
+                this.prev(); // Swipe right = previous image
+            }
+        }
     }
 
     showSlide(index) {

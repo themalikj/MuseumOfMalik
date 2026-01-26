@@ -6,18 +6,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeModal = document.querySelector('.close');
     const rsvpForm = document.getElementById('rsvpForm');
 
-    // Open modal
-    rsvpButton.addEventListener('click', () => {
-        rsvpModal.style.display = 'block';
-        document.body.style.overflow = 'hidden';
-    });
-
     // Close modal
-    closeModal.addEventListener('click', () => {
-        rsvpModal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-        resetModalState();
-    });
+    if (closeModal) {
+        closeModal.addEventListener('click', () => {
+            rsvpModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            resetModalState();
+        });
+    }
 
     // Close modal when clicking outside
     window.addEventListener('click', (event) => {
