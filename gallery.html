@@ -41,7 +41,7 @@
         <nav class="gallery-nav">
             <div class="nav-controls">
                 <button id="playPauseBtn" class="control-btn">Pause</button>
-                <button id="fullscreenBtn" class="control-btn">Fullscreen</button>
+                <button id="fullscreenBtn" class="control-btn" onclick="toggleFullscreen()">Fullscreen</button>
             </div>
         </nav>
 
@@ -60,10 +60,6 @@
             <div class="slide-counter" id="slideCounter">
                 <span id="currentSlide">1</span> / <span id="totalSlides">1</span>
             </div>
-            
-            <!-- Manual navigation -->
-            <button class="slide-nav prev" id="prevBtn">‹</button>
-            <button class="slide-nav next" id="nextBtn">›</button>
         </div>
 
         <!-- Info overlay -->
@@ -74,6 +70,43 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Simple fullscreen function
+        function toggleFullscreen() {
+            const nav = document.querySelector('.gallery-nav');
+            const info = document.querySelector('.info-overlay');
+            const counter = document.querySelector('.slide-counter');
+            
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+                // Hide UI elements in fullscreen
+                if (nav) nav.style.display = 'none';
+                if (info) info.style.display = 'none';
+                if (counter) counter.style.display = 'none';
+            } else {
+                document.exitFullscreen();
+                // Show UI elements when exiting fullscreen
+                if (nav) nav.style.display = 'block';
+                if (info) info.style.display = 'block';
+                if (counter) counter.style.display = 'block';
+            }
+        }
+        
+        // Handle ESC key fullscreen exit
+        document.addEventListener('fullscreenchange', () => {
+            const nav = document.querySelector('.gallery-nav');
+            const info = document.querySelector('.info-overlay');
+            const counter = document.querySelector('.slide-counter');
+            
+            if (!document.fullscreenElement) {
+                // User exited fullscreen, show UI elements
+                if (nav) nav.style.display = 'block';
+                if (info) info.style.display = 'block';
+                if (counter) counter.style.display = 'block';
+            }
+        });
+    </script>
 
     <script src="simple-gallery.js"></script>
 </body>
