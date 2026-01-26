@@ -34,13 +34,6 @@
     </style>
     
     <link rel="stylesheet" href="gallery-styles.css">
-    <script>
-        // Dynamic cache busting for CSS
-        const cssLink = document.querySelector('link[href*="gallery-styles.css"]');
-        if (cssLink) {
-            cssLink.href = `gallery-styles.css?v=${Date.now()}`;
-        }
-    </script>
 </head>
 <body>
     <div class="gallery-container">
@@ -82,11 +75,6 @@
         </div>
     </div>
 
-    <script>
-        // Dynamic cache busting for JavaScript
-        const script = document.createElement('script');
-        script.src = `google-drive-gallery.js?v=${Date.now()}`;
-        document.body.appendChild(script);
-    </script>
+    <script src="google-drive-gallery.js"></script>
 </body>
 </html>
