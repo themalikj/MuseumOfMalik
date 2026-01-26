@@ -248,6 +248,13 @@ body {
     background: #000;
 }
 
+/* Desktop-only elements */
+@media screen and (max-width: 1200px) {
+    .desktop-only {
+        display: none !important;
+    }
+}
+
 /* Mobile optimizations */
 @media screen and (max-width: 1024px) {
     .info-overlay {

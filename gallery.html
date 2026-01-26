@@ -41,7 +41,7 @@
         <nav class="gallery-nav">
             <div class="nav-controls">
                 <button id="playPauseBtn" class="control-btn">Pause</button>
-                <button id="fullscreenBtn" class="control-btn" onclick="toggleFullscreen()">Fullscreen</button>
+                <button id="fullscreenBtn" class="control-btn desktop-only" onclick="toggleFullscreen()">Fullscreen</button>
             </div>
         </nav>
 
@@ -72,8 +72,13 @@
     </div>
 
     <script>
-        // Simple fullscreen function
+        // Simple fullscreen function - desktop only
         function toggleFullscreen() {
+            // Only allow fullscreen on desktop (screens wider than 1200px)
+            if (window.innerWidth <= 1200) {
+                return;
+            }
+            
             const nav = document.querySelector('.gallery-nav');
             const info = document.querySelector('.info-overlay');
             const counter = document.querySelector('.slide-counter');
