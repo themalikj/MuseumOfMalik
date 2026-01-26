@@ -1,14 +1,16 @@
 class GoogleDriveGallery {
     constructor() {
-        // Google Drive API Configuration  
+        // Google Drive API Configuration - Single folder for all photos
         this.API_KEY = 'AIzaSyBqWZ78EOSh1knZ5yP3hzALGG00APOQJCQ';
-        this.FOLDER_ID = '103ev806ae7UjAaQ650QhnIsVIauFT4Fz';
-        this.FORM_FOLDER_ID = '1KV4NETKYwFJYbPzCdZNC1WDkCH5Q5OVq3w_JIWqhDXOln2bVUJLVn3uGZxjpDCKrCVXqZbmf';
+        this.FOLDER_ID = '1KV4NETKYwFJYbPzCdZNC1WDkCH5Q5OVq3w_JIWqhDXOln2bVUJLVn3uGZxjpDCKrCVXqZbmf';
         this.photos = [];
         this.currentSlideIndex = 0;
         this.isPlaying = true;
         this.slideDuration = 4000;
         this.slideInterval = null;
+        
+        // Cache photos to avoid rate limits
+        this.loadFromCache();
         
         this.initializeElements();
         this.setupEventListeners();
@@ -19,55 +21,71 @@ class GoogleDriveGallery {
         // Add network status monitoring
         this.setupNetworkMonitoring();
         
-        // Auto-refresh to check for new photos every 30 seconds
+        // Auto-refresh to check for new photos every 5 minutes (reduced from 30s to avoid rate limits)
         this.setupAutoRefresh();
+    }
+    
+    loadFromCache() {
+        try {
+            const cached = localStorage.getItem('gallery_photos');
+            if (cached) {
+                const data = JSON.parse(cached);
+                if (Date.now() - data.timestamp < 600000) {
+                    this.photos = data.photos;
+                    if (this.photos.length > 0) {
+                        this.createSlideElements();
+                        this.updateSlideCounter();
+                        this.startSlideshow();
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Cache error:', error);
+        }
+    }
+    
+    saveToCache() {
+        try {
+            localStorage.setItem('gallery_photos', JSON.stringify({
+                photos: this.photos,
+                timestamp: Date.now()
+            }));
+        } catch (error) {
+            console.error('Cache save error:', error);
+        }
+    }
     }
     
     setupNetworkMonitoring() {
         if (typeof navigator !== 'undefined' && 'onLine' in navigator) {
             window.addEventListener('online', () => {
-                console.log('🌐 Back online - reloading photos');
                 this.loadPhotosFromGoogleDrive();
             });
             
             window.addEventListener('offline', () => {
-                console.log('📴 Gone offline');
                 this.showErrorMessage('You are currently offline. Some features may not work until you reconnect.');
             });
         }
     }
     
     setupAutoRefresh() {
-        // Check for new photos every 30 seconds
         setInterval(async () => {
             try {
-                console.log('🔄 Auto-checking for new photos...');
                 await this.checkAndUpdatePhotos();
             } catch (error) {
                 console.error('Auto-refresh error:', error);
             }
-        }, 30000); // 30 seconds
+        }, 300000);
     }
     
     async checkAndUpdatePhotos() {
         try {
-            // Load photos from both folders
-            const [galleryPhotos, formPhotos] = await Promise.all([
-                this.loadPhotosFromFolder(this.FOLDER_ID, 'gallery'),
-                this.loadPhotosFromFolder(this.FORM_FOLDER_ID, 'form')
-            ]);
-            
-            // Combine and sort
-            const newPhotos = [...galleryPhotos, ...formPhotos].sort((a, b) => 
-                new Date(b.createdTime) - new Date(a.createdTime)
-            );
+            // Load photos from the single folder
+            const newPhotos = await this.loadPhotosFromFolder(this.FOLDER_ID, 'gallery');
             
             // Check if there are new photos
             if (newPhotos.length !== this.photos.length) {
-                const oldCount = this.photos.length;
                 this.photos = newPhotos;
-                
-                console.log(`✨ Found ${newPhotos.length - oldCount} new photo(s)! Updating slideshow...`);
                 
                 // Remember current slide position
                 const wasPlaying = this.isPlaying;
@@ -82,8 +100,6 @@ class GoogleDriveGallery {
                 }
                 
                 this.updateLastUpdateTime();
-            } else {
-                console.log('✅ No new photos found');
             }
         } catch (error) {
             console.error('Error checking for new photos:', error);
@@ -106,10 +122,8 @@ class GoogleDriveGallery {
             if (!this.galleryWrapper || !this.slidesContainer) {
                 throw new Error('Critical gallery elements not found');
             }
-            
-            console.log('✅ All DOM elements initialized successfully');
         } catch (error) {
-            console.error('❌ Failed to initialize DOM elements:', error);
+            console.error('Failed to initialize DOM elements:', error);
             this.showErrorMessage('Gallery initialization failed. Please refresh the page.');
         }
     }
@@ -137,10 +151,8 @@ class GoogleDriveGallery {
             window.addEventListener('error', (event) => {
                 console.error('Global error caught:', event.error);
             });
-            
-            console.log('✅ Event listeners setup complete');
         } catch (error) {
-            console.error('❌ Failed to setup event listeners:', error);
+            console.error('Failed to setup event listeners:', error);
         }
     }
     
@@ -150,27 +162,15 @@ class GoogleDriveGallery {
         
         while (retryCount < maxRetries) {
             try {
-                console.log(`🔄 Loading photos... (attempt ${retryCount + 1}/${maxRetries})`);
-                
-                // Load from both folders with timeout
+                // Load from single folder with timeout
                 const timeoutPromise = new Promise((_, reject) => 
                     setTimeout(() => reject(new Error('Request timeout')), 15000)
                 );
                 
-                const [galleryPhotos, formPhotos] = await Promise.race([
-                    Promise.all([
-                        this.loadPhotosFromFolder(this.FOLDER_ID, 'gallery'),
-                        this.loadPhotosFromFolder(this.FORM_FOLDER_ID, 'form')
-                    ]),
+                this.photos = await Promise.race([
+                    this.loadPhotosFromFolder(this.FOLDER_ID, 'gallery'),
                     timeoutPromise
                 ]);
-                
-                // Combine and sort by creation time
-                this.photos = [...galleryPhotos, ...formPhotos].sort((a, b) => 
-                    new Date(b.createdTime) - new Date(a.createdTime)
-                );
-                
-                console.log(`✅ Successfully loaded ${this.photos.length} photos (${galleryPhotos.length} from gallery, ${formPhotos.length} from form)`);
                 
                 if (this.photos.length === 0) {
                     this.showNoImagesMessage();
@@ -181,15 +181,14 @@ class GoogleDriveGallery {
                 this.updateSlideCounter();
                 this.startSlideshow();
                 this.updateLastUpdateTime();
+                this.saveToCache(); // Cache the photos
                 return; // Success, exit retry loop
                 
             } catch (error) {
-                console.error(`❌ Attempt ${retryCount + 1} failed:`, error);
                 retryCount++;
                 
                 if (retryCount < maxRetries) {
-                    const delay = Math.pow(2, retryCount) * 1000; // Exponential backoff
-                    console.log(`⏳ Retrying in ${delay/1000}s...`);
+                    const delay = Math.pow(2, retryCount) * 1000;
                     await new Promise(resolve => setTimeout(resolve, delay));
                 } else {
                     this.showErrorMessage(`Failed to load photos after ${maxRetries} attempts. Please check your internet connection and refresh the page.`);
@@ -200,33 +199,35 @@ class GoogleDriveGallery {
     
     async loadPhotosFromFolder(folderId, source) {
         try {
-            console.log(`Loading from ${source} folder:`, folderId);
-            
-            const apiUrl = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+trashed=false+and+(mimeType='image/jpeg'+or+mimeType='image/jpg'+or+mimeType='image/png'+or+mimeType='image/webp'+or+mimeType='image/gif')&fields=files(id,name,mimeType,createdTime)&orderBy=createdTime+desc&key=${this.API_KEY}`;
+            const apiUrl = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+trashed=false+and+(mimeType='image/jpeg'+or+mimeType='image/jpg'+or+mimeType='image/png'+or+mimeType='image/webp'+or+mimeType='image/gif')&fields=files(id,name,mimeType,createdTime,thumbnailLink)&orderBy=createdTime+desc&key=${this.API_KEY}`;
             
             const response = await fetch(apiUrl);
             const data = await response.json();
             
             if (data.error) {
-                console.error(`Error loading from ${source} folder:`, data.error);
+                console.error('API Error:', data.error);
                 return [];
             }
             
             if (!data.files || data.files.length === 0) {
-                console.log(`No files found in ${source} folder`);
                 return [];
             }
             
-            return data.files.map(file => ({
-                id: file.id,
-                name: file.name,
-                url: `https://lh3.googleusercontent.com/d/${file.id}=w2000-h2000`,
-                altUrl: `https://drive.google.com/uc?export=view&id=${file.id}`,
-                thirdUrl: `https://drive.usercontent.google.com/download?id=${file.id}&export=view`,
-                fourthUrl: `https://drive.google.com/thumbnail?id=${file.id}&sz=w2000-h2000`,
-                createdTime: file.createdTime,
-                source: source
-            }));
+            const sortedFiles = data.files.sort((a, b) => 
+                new Date(b.createdTime) - new Date(a.createdTime)
+            );
+            
+            return sortedFiles.map(file => {
+                const imageUrl = file.thumbnailLink ? file.thumbnailLink.replace(/=s\d+/, '=s2000') : `https://lh3.googleusercontent.com/d/${file.id}=w2000`;
+                return {
+                    id: file.id,
+                    name: file.name,
+                    url: imageUrl,
+                    thumbnailLink: file.thumbnailLink,
+                    createdTime: file.createdTime,
+                    source: source
+                };
+            });
             
         } catch (error) {
             console.error(`Error loading from ${source} folder:`, error);
@@ -240,11 +241,7 @@ class GoogleDriveGallery {
             loadingSlide.remove();
         }
         
-        console.log(`Creating slide elements for ${this.photos.length} photos`);
-        
         this.photos.forEach((photo, index) => {
-            console.log(`Creating slide ${index + 1}: ${photo.name}`);
-            
             const slide = document.createElement('div');
             slide.className = `slide ${index === 0 ? 'active' : ''}`;
             
@@ -253,23 +250,20 @@ class GoogleDriveGallery {
             img.alt = photo.name;
             img.loading = 'eager';
             
-            // Add comprehensive error handling
+            
             let urlAttempts = 0;
             const urls = [
                 photo.url,
-                photo.altUrl, 
-                photo.thirdUrl,
-                photo.fourthUrl,
-                `https://drive.google.com/uc?export=download&id=${photo.id}`,
-                `https://drive.google.com/file/d/${photo.id}/view`
-            ];
+                photo.thumbnailLink,
+                `https://lh3.googleusercontent.com/d/${photo.id}=w2000`,
+                `https://lh3.googleusercontent.com/d/${photo.id}`
+            ].filter(url => url);
+            
             
             img.onerror = () => {
                 urlAttempts++;
-                console.log(`Image load failed for ${photo.name}, attempt ${urlAttempts}`);
                 
                 if (urlAttempts < urls.length) {
-                    console.log(`Trying alternate URL: ${urls[urlAttempts]}`);
                     img.src = urls[urlAttempts];
                 } else {
                     console.error(`All URL attempts failed for ${photo.name}`);
@@ -313,9 +307,7 @@ class GoogleDriveGallery {
                 }
             };
             
-            img.onload = () => {
-                console.log(`Successfully loaded image: ${photo.name} on attempt ${urlAttempts + 1}`);
-            };
+            img.onload = () => {};
             
             slide.appendChild(img);
             this.slidesContainer.appendChild(slide);
@@ -472,12 +464,8 @@ class GoogleDriveGallery {
 
     
     retryImage(photoId, slideElement) {
-        console.log(`Retrying image load for ID: ${photoId}`);
-        
-        // Find the photo data
         const photo = this.photos.find(p => p.id === photoId);
         if (!photo) {
-            console.error('Photo not found for retry');
             return;
         }
         
@@ -492,29 +480,38 @@ class GoogleDriveGallery {
         img.alt = photo.name;
         img.loading = 'eager';
         
-        // Try different URL approach for retry
         const retryUrls = [
-            `https://lh3.googleusercontent.com/d/${photo.id}=s2000`,
-            `https://drive.google.com/uc?export=view&id=${photo.id}&authuser=0`,
-            `https://drive.usercontent.google.com/u/0/uc?id=${photo.id}&export=download`
+            `https://lh3.googleusercontent.com/d/${photo.id}=w2000`,
+            `https://lh3.googleusercontent.com/d/${photo.id}`,
+            `https://drive.google.com/thumbnail?id=${photo.id}&sz=w2000`
         ];
         
         let attemptIndex = 0;
         
         const tryNextUrl = () => {
             if (attemptIndex < retryUrls.length) {
-                console.log(`Retry attempt ${attemptIndex + 1} for ${photo.name}: ${retryUrls[attemptIndex]}`);
                 img.src = retryUrls[attemptIndex];
                 attemptIndex++;
             } else {
-                console.error(`Retry failed for ${photo.name}`);
+                console.log(`
+📁 FOLDER SHARING INSTRUCTIONS:
+1. Open Google Drive and find your folder
+2. Right-click the folder → Share
+3. Under "General access" click "Restricted" 
+4. Change to "Anyone with the link" 
+5. Set permission to "Viewer"
+6. Click "Done" and refresh this page
+`);
                 // Show retry failed message
                 const failDiv = document.createElement('div');
                 failDiv.innerHTML = `
                     <div style="font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
-                    <p>Retry failed - Image may be private</p>
-                    <small style="opacity: 0.6; margin-top: 0.5rem; display: block;">
-                        Check if the Google Drive folder is shared publicly
+                    <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">Image Not Accessible</p>
+                    <small style="opacity: 0.8; margin-bottom: 0.3rem; display: block; max-width: 400px;">
+                        The Google Drive folder needs to be shared publicly
+                    </small>
+                    <small style="opacity: 0.6; display: block; font-size: 0.85rem; max-width: 400px; line-height: 1.4;">
+                        Right-click folder → Share → "Anyone with the link" (Viewer)
                     </small>
                 `;
                 failDiv.style.cssText = `
