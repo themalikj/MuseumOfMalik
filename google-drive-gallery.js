@@ -218,11 +218,13 @@ class GoogleDriveGallery {
             
             return sortedFiles.map(file => {
                 const imageUrl = file.thumbnailLink ? file.thumbnailLink.replace(/=s\d+/, '=s2000') : `https://lh3.googleusercontent.com/d/${file.id}=w2000`;
+                // Add cache busting parameter to force fresh image loads
+                const cacheBuster = `&cb=${Date.now()}`;
                 return {
                     id: file.id,
                     name: file.name,
-                    url: imageUrl,
-                    thumbnailLink: file.thumbnailLink,
+                    url: imageUrl + cacheBuster,
+                    thumbnailLink: file.thumbnailLink ? file.thumbnailLink + cacheBuster : null,
                     createdTime: file.createdTime,
                     source: source
                 };
@@ -251,11 +253,13 @@ class GoogleDriveGallery {
             
             
             let urlAttempts = 0;
+            // Add cache busting to all fallback URLs
+            const cacheBuster = `&cb=${Date.now()}`;
             const urls = [
                 photo.url,
                 photo.thumbnailLink,
-                `https://lh3.googleusercontent.com/d/${photo.id}=w2000`,
-                `https://lh3.googleusercontent.com/d/${photo.id}`
+                `https://lh3.googleusercontent.com/d/${photo.id}=w2000${cacheBuster}`,
+                `https://lh3.googleusercontent.com/d/${photo.id}${cacheBuster}`
             ].filter(url => url);
             
             

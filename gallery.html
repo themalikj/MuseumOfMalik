@@ -10,9 +10,11 @@
     <link rel="shortcut icon" href="images/favicon.png">
     
     <!-- Cache-busting meta tags -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
+    <meta name="cache-control" content="no-cache">
+    <meta name="expires" content="0">
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -38,7 +40,14 @@
         }
     </style>
     
-    <link rel="stylesheet" href="gallery-styles.css?v=2026012508">
+    <link rel="stylesheet" href="gallery-styles.css">
+    <script>
+        // Dynamic cache busting for CSS
+        const cssLink = document.querySelector('link[href*="gallery-styles.css"]');
+        if (cssLink) {
+            cssLink.href = `gallery-styles.css?v=${Date.now()}`;
+        }
+    </script>
 </head>
 <body>
     <div class="gallery-container">
@@ -80,6 +89,11 @@
         </div>
     </div>
 
-    <script src="google-drive-gallery.js?v=2026012601"></script>
+    <script>
+        // Dynamic cache busting for JavaScript
+        const script = document.createElement('script');
+        script.src = `google-drive-gallery.js?v=${Date.now()}`;
+        document.body.appendChild(script);
+    </script>
 </body>
 </html>
