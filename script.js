@@ -1,33 +1,35 @@
-// RSVP Modal functionality
-const rsvpButton = document.getElementById('rsvpButton');
-const rsvpModal = document.getElementById('rsvpModal');
-const closeModal = document.querySelector('.close');
-const rsvpForm = document.getElementById('rsvpForm');
+// Wait for DOM to be fully loaded
+document.addEventListener('DOMContentLoaded', () => {
+    // RSVP Modal functionality
+    const rsvpButton = document.getElementById('rsvpButton');
+    const rsvpModal = document.getElementById('rsvpModal');
+    const closeModal = document.querySelector('.close');
+    const rsvpForm = document.getElementById('rsvpForm');
 
-// Open modal
-rsvpButton.addEventListener('click', () => {
-    rsvpModal.style.display = 'block';
-    document.body.style.overflow = 'hidden';
-});
+    // Open modal
+    rsvpButton.addEventListener('click', () => {
+        rsvpModal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    });
 
-// Close modal
-closeModal.addEventListener('click', () => {
-    rsvpModal.style.display = 'none';
-    document.body.style.overflow = 'auto';
-    resetModalState();
-});
-
-// Close modal when clicking outside
-window.addEventListener('click', (event) => {
-    if (event.target === rsvpModal) {
+    // Close modal
+    closeModal.addEventListener('click', () => {
         rsvpModal.style.display = 'none';
         document.body.style.overflow = 'auto';
         resetModalState();
-    }
-});
+    });
 
-// Approved guest list
-const approvedGuests = [
+    // Close modal when clicking outside
+    window.addEventListener('click', (event) => {
+        if (event.target === rsvpModal) {
+            rsvpModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            resetModalState();
+        }
+    });
+
+    // Approved guest list
+    const approvedGuests = [
     'malik', 'therrance', 'malachi', 'simon', 'marquise', 'nosa', 'nosakhare',
     'sammie', 'xavier', 'kris', 'kristofer', 'amber', 'faith', 'kenneth',
     'zack', 'quanell', 'madison', 'robbie', 'drea', 'andrea', 'darius',
@@ -35,19 +37,19 @@ const approvedGuests = [
     'brittany', 'eriqa', 'deejay', 'darrelka', 'cello', 'marcellous',
     'justin', 'ne', 'shantine', 'kierra', 'gene', 'derrick', 'sean',
     're', 'dharea'
-];
+    ];
 
-// Function to check if name is on guest list
-function isApprovedGuest(name) {
+    // Function to check if name is on guest list
+    function isApprovedGuest(name) {
     const cleanName = name.toLowerCase().trim().replace(/[^a-z']/g, '');
     return approvedGuests.some(approvedName => {
         const cleanApproved = approvedName.toLowerCase().replace(/[^a-z']/g, '');
         return cleanName === cleanApproved || cleanName.includes(cleanApproved) || cleanApproved.includes(cleanName);
-    });
-}
+        });
+    }
 
-// Handle form submission
-rsvpForm.addEventListener('submit', async (e) => {
+    // Handle form submission
+    rsvpForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     
     const formData = new FormData(rsvpForm);
@@ -105,26 +107,26 @@ rsvpForm.addEventListener('submit', async (e) => {
         // Re-enable submit button
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
-    }
-});
+        }
+    });
 
-// Calendar functionality
-function showCalendarOptions(guestName) {
+    // Calendar functionality
+    function showCalendarOptions(guestName) {
     // Hide the form and show calendar buttons
-    document.getElementById('rsvpForm').style.display = 'none';
-    document.getElementById('calendarButtons').style.display = 'block';
-    
-    // Update modal title
-    const modalTitle = rsvpModal.querySelector('h2');
-    modalTitle.textContent = `Thank you, ${guestName}!`;
-    
-    // Update subtitle
-    const modalSubtitle = rsvpModal.querySelector('.modal-subtitle');
-    modalSubtitle.textContent = 'Your RSVP has been submitted successfully. We\'ll see you at The Museum of Malik!\n\nSaturday, April 25, 2026 • 6:00 PM - 10:00 PM\nStudio Eight08, 808 Travis St, Houston, TX';
-    modalSubtitle.style.whiteSpace = 'pre-line';
-}
+        document.getElementById('rsvpForm').style.display = 'none';
+        document.getElementById('calendarButtons').style.display = 'block';
+        
+        // Update modal title
+        const modalTitle = rsvpModal.querySelector('h2');
+        modalTitle.textContent = `Thank you, ${guestName}!`;
+        
+        // Update subtitle
+        const modalSubtitle = rsvpModal.querySelector('.modal-subtitle');
+        modalSubtitle.textContent = 'Your RSVP has been submitted successfully. We\'ll see you at The Museum of Malik!\n\nSaturday, April 25, 2026 • 6:00 PM - 10:00 PM\nStudio Eight08, 808 Travis St, Houston, TX';
+        modalSubtitle.style.whiteSpace = 'pre-line';
+    }
 
-function generateGoogleCalendarUrl() {
+    function generateGoogleCalendarUrl() {
     const event = {
         title: 'The Museum of Malik - A 30-Year Retrospective',
         start: '20260425T230000Z', // April 25, 2026, 6:00 PM CDT = April 25 23:00 UTC
@@ -141,11 +143,11 @@ function generateGoogleCalendarUrl() {
         details: event.details,
         location: event.location
     });
-    
-    return `${baseUrl}?${params.toString()}`;
-}
+        
+        return `${baseUrl}?${params.toString()}`;
+    }
 
-function generateAppleCalendarUrl() {
+    function generateAppleCalendarUrl() {
     const event = {
         title: 'The Museum of Malik - A 30-Year Retrospective',
         start: '20260425T230000Z', // April 25, 2026, 6:00 PM CDT = April 25 23:00 UTC
@@ -168,12 +170,11 @@ DESCRIPTION:${event.description}
 LOCATION:${event.location}
 END:VEVENT
 END:VCALENDAR`;
-    
-    return `data:text/calendar;charset=utf8,${encodeURIComponent(icsContent)}`;
-}
+        
+        return `data:text/calendar;charset=utf8,${encodeURIComponent(icsContent)}`;
+    }
 
-// Calendar button event listeners
-document.addEventListener('DOMContentLoaded', () => {
+    // Calendar button event listeners
     const googleCalBtn = document.getElementById('googleCalBtn');
     const appleCalBtn = document.getElementById('appleCalBtn');
     
@@ -204,18 +205,18 @@ document.addEventListener('DOMContentLoaded', () => {
             resetModalState();
         }, 1000);
     });
-});
 
-function resetModalState() {
+    function resetModalState() {
     // Reset modal to original state
-    document.getElementById('rsvpForm').style.display = 'block';
-    document.getElementById('calendarButtons').style.display = 'none';
-    
-    const modalTitle = rsvpModal.querySelector('h2');
-    modalTitle.textContent = 'RSVP';
-    
-    const modalSubtitle = rsvpModal.querySelector('.modal-subtitle');
-    modalSubtitle.textContent = 'One guest per invitation';
-    
-    rsvpForm.reset();
-}
+        document.getElementById('rsvpForm').style.display = 'block';
+        document.getElementById('calendarButtons').style.display = 'none';
+        
+        const modalTitle = rsvpModal.querySelector('h2');
+        modalTitle.textContent = 'RSVP';
+        
+        const modalSubtitle = rsvpModal.querySelector('.modal-subtitle');
+        modalSubtitle.textContent = 'One guest per invitation';
+        
+        rsvpForm.reset();
+    }
+});

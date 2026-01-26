@@ -54,7 +54,6 @@ class GoogleDriveGallery {
             console.error('Cache save error:', error);
         }
     }
-    }
     
     setupNetworkMonitoring() {
         if (typeof navigator !== 'undefined' && 'onLine' in navigator) {
