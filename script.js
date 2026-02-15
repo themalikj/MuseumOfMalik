@@ -31,8 +31,8 @@ document.addEventListener('DOMContentLoaded', () => {
     'zack', 'quanell', 'madison', 'robbie', 'drea', 'andrea', 'darius',
     'keena', 'jaylen', 'rico', "ed'rico", 'edrico', 'willie', 'josh', 'joshua',
     'brittany', 'eriqa', 'deejay', 'darrelka', 'cello', 'marcellous',
-    'justin', 'ne', 'shantine', 'kierra', 'gene', 'derrick', 'sean',
-    're', 'dharea', 'boyd', 'dionte', 'dionté', 'cortez', 'deanthony'
+    'justin', 'ne', 'shantine', 'kierra', 'gene', 'derrick', 'sean', 'josh', 'joshua', 'brenda', 
+    're', 'dharea', 'boyd', 'jamina', 'mimi', 'gabby', 'gabriel', 'caleb', 'dionte', 'dionté', 'cortez', 'deanthony'
     ];
 
     // Function to check if name is on guest list
