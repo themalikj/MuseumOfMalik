@@ -92,8 +92,8 @@
                 if (counter) counter.style.display = 'none';
             } else {
                 document.exitFullscreen();
-                // Show UI elements when exiting fullscreen
-                if (nav) nav.style.display = 'block';
+                // Show UI elements when exiting fullscreen with proper display values
+                if (nav) nav.style.display = 'flex';
                 if (info) info.style.display = 'block';
                 if (counter) counter.style.display = 'block';
             }
@@ -106,8 +106,8 @@
             const counter = document.querySelector('.slide-counter');
             
             if (!document.fullscreenElement) {
-                // User exited fullscreen, show UI elements
-                if (nav) nav.style.display = 'block';
+                // User exited fullscreen, show UI elements with proper display values
+                if (nav) nav.style.display = 'flex';
                 if (info) info.style.display = 'block';
                 if (counter) counter.style.display = 'block';
             }
