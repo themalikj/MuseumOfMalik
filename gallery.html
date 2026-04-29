@@ -9,111 +9,17 @@
     <link rel="icon" type="image/png" href="images/favicon.png">
     <link rel="shortcut icon" href="images/favicon.png">
     
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Custom Fonts -->
-    <style>
-        @font-face {
-            font-family: 'BrownSugar';
-            src: url('Fonts/brown-sugar.ttf') format('truetype');
-            font-weight: normal;
-            font-style: normal;
-            font-display: swap;
-        }
-        
-        @font-face {
-            font-family: 'TanMonCheri';
-            src: url('Fonts/tan-mon-cheri.ttf') format('truetype');
-            font-weight: normal;
-            font-style: normal;
-            font-display: swap;
-        }
-    </style>
-    
-    <link rel="stylesheet" href="gallery-styles.css">
+    <!-- Redirect to Lightroom Gallery -->
+    <script>
+        window.location.href = 'https://lightroom.adobe.com/shares/df02db447acf4bf3bcc6f9d16361e9e4';
+    </script>
+    <meta http-equiv="refresh" content="0;url=https://lightroom.adobe.com/shares/df02db447acf4bf3bcc6f9d16361e9e4">
 </head>
 <body>
-    <div class="gallery-container">
-        <!-- Navigation -->
-        <nav class="gallery-nav">
-            <div class="nav-controls">
-                <button id="playPauseBtn" class="control-btn">Pause</button>
-                <button id="fullscreenBtn" class="control-btn desktop-only" onclick="toggleFullscreen()">Fullscreen</button>
-                <button id="formBtn" class="control-btn" onclick="window.open('https://forms.gle/4Lw5gavu11CAZjn46', '_blank')">Post</button>
-            </div>
-        </nav>
-
-        <!-- Gallery -->
-        <div class="gallery-wrapper" id="galleryWrapper">
-            <div class="slides-container" id="slidesContainer">
-                <div class="slide active" id="loadingSlide">
-                    <div class="loading-message">
-                        <h2>Loading gallery...</h2>
-                        <p>Preparing your photos</p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Slide counter -->
-            <div class="slide-counter" id="slideCounter">
-                <span id="currentSlide">1</span> / <span id="totalSlides">1</span>
-            </div>
-        </div>
-
-        <!-- Info overlay -->
-        <div class="info-overlay" id="infoOverlay">
-            <div class="info-content">
-                <h3>Museum of Malik Gallery</h3>
-                <p class="update-time">Last updated: <span id="lastUpdate">--</span></p>
-            </div>
-        </div>
+    <div style="font-family: Inter, sans-serif; text-align: center; padding: 50px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; color: white;">
+        <h1>Redirecting to Gallery...</h1>
+        <p>You will be automatically redirected to the Museum of Malik gallery.</p>
+        <p><a href="https://lightroom.adobe.com/shares/df02db447acf4bf3bcc6f9d16361e9e4" style="color: white; text-decoration: underline;">Click here if you are not redirected automatically</a></p>
     </div>
-
-    <script>
-        // Simple fullscreen function - desktop only
-        function toggleFullscreen() {
-            // Only allow fullscreen on desktop (screens wider than 1200px)
-            if (window.innerWidth <= 1200) {
-                return;
-            }
-            
-            const nav = document.querySelector('.gallery-nav');
-            const info = document.querySelector('.info-overlay');
-            const counter = document.querySelector('.slide-counter');
-            
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen();
-                // Hide UI elements in fullscreen
-                if (nav) nav.style.display = 'none';
-                if (info) info.style.display = 'none';
-                if (counter) counter.style.display = 'none';
-            } else {
-                document.exitFullscreen();
-                // Show UI elements when exiting fullscreen with proper display values
-                if (nav) nav.style.display = 'flex';
-                if (info) info.style.display = 'block';
-                if (counter) counter.style.display = 'block';
-            }
-        }
-        
-        // Handle ESC key fullscreen exit
-        document.addEventListener('fullscreenchange', () => {
-            const nav = document.querySelector('.gallery-nav');
-            const info = document.querySelector('.info-overlay');
-            const counter = document.querySelector('.slide-counter');
-            
-            if (!document.fullscreenElement) {
-                // User exited fullscreen, show UI elements with proper display values
-                if (nav) nav.style.display = 'flex';
-                if (info) info.style.display = 'block';
-                if (counter) counter.style.display = 'block';
-            }
-        });
-    </script>
-
-    <script src="simple-gallery.js"></script>
 </body>
 </html>
